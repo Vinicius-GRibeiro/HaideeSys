@@ -1,4 +1,4 @@
-# Projeto HaideeSys
+# Projeto HaideeSys (WIP)
 
 HaideeSys é um sistema de gerenciamento acadêmico desenvolvido com Python, utilizando o framework **Flet** para a interface gráfica e **Peewee** para o gerenciamento do banco de dados PostgreSQL.
 
