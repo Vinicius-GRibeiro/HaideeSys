@@ -1,99 +1,97 @@
-import datetime
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
-# class SimpleLogger:
-#     def __init__(self):
-#         """
-#         Inicializa o logger.
-#
-#         :param log_file: Caminho para o arquivo onde os logs serão armazenados.
-#         """
-#         self.log_file = os.path.join(os.getenv('APPDATA'), os.getenv('APPNAME'), 'Log')
-#
-#     def _write_log(self, level, message):
-#         """
-#         Escreve a mensagem de log no arquivo e exibe no console.
-#
-#         :param level: Nível do log (INFO ou ERROR).
-#         :param message: Mensagem a ser registrada.
-#         """
-#         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#         log_message = f"[{timestamp}] [{level}] {message}"
-#
-#         # Salva no arquivo de log
-#         with open(self.log_file, 'a') as file:
-#             file.write(log_message + '\n')
-#
-#         # Exibe no console
-#         print(log_message)
-#
-#     def info(self, message):
-#         """
-#         Registra uma mensagem de informação.
-#
-#         :param message: Mensagem a ser registrada.
-#         """
-#         self._write_log('INFO', message)
-#
-#     def error(self, message):
-#         """
-#         Registra uma mensagem de erro.
-#
-#         :param message: Mensagem a ser registrada.
-#         """
-#         self._write_log('ERROR', message)
-class Logger:
-    _caminho_programa = os.path.join(os.getenv('APPDATA'), os.getenv('APPNAME'))
 
-    info_log_file = os.path.join(_caminho_programa, 'logs', 'info.log')
-    error_log_file = os.path.join(_caminho_programa, 'logs', 'error.log')
-    dev_log_file = os.path.join(_caminho_programa, 'logs', 'dev.log')
+class Logger:
+    """
+    Classe de Logger personalizada para gerenciar logs do sistema em diferentes níveis.
+
+    Logs são salvos em arquivos distintos para cada nível e estão preparados para futuras integrações
+    com serviços de comunicação em tempo real para erros e exceções.
+    """
+    _caminho_programa = os.path.join(os.getenv('APPDATA', '.'), os.getenv('APPNAME', 'app'))
+
+    # Definir diretórios e arquivos de log
+    _log_dir = os.path.join(_caminho_programa, 'logs')
+    info_log_file = os.path.join(_log_dir, 'info.log')
+    error_log_file = os.path.join(_log_dir, 'error.log')
+    debug_log_file = os.path.join(_log_dir, 'debug.log')
 
     @staticmethod
-    def _write_log(level, message, log_file):
+    def _setup_logger(name: str, log_file: str, level: int) -> logging.Logger:
         """
-        Escreve a mensagem de log no arquivo específico e exibe no console.
+        Configura um logger com arquivo de saída específico e nível de log.
 
-        :param level: Nível do log (INFO ou ERROR).
-        :param message: Mensagem a ser registrada.
-        :param log_file: Arquivo onde o log será salvo.
+        :param name: Nome do logger.
+        :param log_file: Caminho do arquivo onde o log será salvo.
+        :param level: Nível do log (INFO, ERROR, DEBUG, etc.).
+        :return: Instância do logger configurado.
         """
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log_message = f"[{timestamp}] [{level}] {message}"
+        logger = logging.getLogger(name)
+        logger.setLevel(level)
 
-        # Salva no arquivo de log
-        with open(log_file, 'a') as file:
-            file.write(log_message + '\n')
+        # Formato do log
+        formatter = logging.Formatter('\n[%(asctime)s] [%(levelname)s] %(message)s')
 
-        # Exibe no console
-        print(log_message)
+        # Configurar arquivo de log
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+
+        # Evitar duplicação de handlers
+        if not logger.handlers:
+            logger.addHandler(file_handler)
+
+        return logger
 
     @classmethod
-    def info(cls, message):
+    def info(cls, message: str):
         """
-        Registra uma mensagem de informação no arquivo de informações.
+        Registra uma mensagem de informação no arquivo de logs INFO.
 
         :param message: Mensagem a ser registrada.
         """
-        cls._write_log('INFO', message, cls.info_log_file)
+        os.makedirs(cls._log_dir, exist_ok=True)
+        logger = cls._setup_logger('INFO', cls.info_log_file, logging.INFO)
+        logger.info(message)
 
     @classmethod
-    def error(cls, message):
+    def debug(cls, message: str):
         """
-        Registra uma mensagem de erro no arquivo de erros.
+        Registra uma mensagem de depuração no arquivo de logs DEBUG somente se a variável DEBUG estiver ativada.
 
         :param message: Mensagem a ser registrada.
         """
-        cls._write_log('ERROR', message, cls.error_log_file)
+        if os.getenv('DEBUG', 0) == 1:
+            os.makedirs(cls._log_dir, exist_ok=True)
+            logger = cls._setup_logger('DEBUG', cls.debug_log_file, logging.DEBUG)
+            logger.debug(message)
 
     @classmethod
-    def dev(cls, message):
+    def error(cls, message: str):
         """
-        Registra uma mensagem de erro no arquivo de dev.
+        Registra uma mensagem de erro no arquivo de logs ERROR e prepara envio em tempo real.
 
         :param message: Mensagem a ser registrada.
         """
-        cls._write_log('DEV', message, cls.error_log_file)
+        os.makedirs(cls._log_dir, exist_ok=True)
+        logger = cls._setup_logger('ERROR', cls.error_log_file, logging.ERROR)
+        logger.error(message)
+
+        # Preparar notificação em tempo real
+        cls._notify_error(message)
+
+    @staticmethod
+    def _notify_error(message: str):
+        """
+        Método para notificar erros em tempo real ao desenvolvedor.
+
+        Neste momento, apenas imprime a intenção, mas pode ser adaptado para integrar com serviços
+        como email, Slack, Telegram, ou outros.
+
+        :param message: Mensagem de erro a ser comunicada.
+        """
+        # Simulação de envio (futuro: integração com APIs de notificações)
+        print(f"[ALERTA] Notificação de erro enviada ao desenvolvedor: {message}")

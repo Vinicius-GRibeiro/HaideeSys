@@ -1,10 +1,10 @@
-from _md_entities import db, Aluno, Pontuacao, ControleDeExcecoes
+from _md_entities import db, Aluno, Pontuacao
 from _md_logger import Logger
 
 def criar_aluno(serie: str, nome: str, laudo: str = None, obs: str = None) -> tuple[bool, int | None]:
-    '''
+    """
     :return: Tupla, sendo o primeiro item, VERDADEIRO ou FALSO e o segundo item, o id do aluno criado ou None, caso algum erro ocorra
-    '''
+    """
     try:
         with db:
             aluno = Aluno.create(
@@ -17,42 +17,18 @@ def criar_aluno(serie: str, nome: str, laudo: str = None, obs: str = None) -> tu
         return True, aluno.id
     except Exception as e:
         Logger.error(f'Erro ao criar aluno: {e}')
-        raise ControleDeExcecoes('Erro ao criar aluno', e)
-    finally:
         return False, None
+
 
 
 def editar_aluno(id_: int, _serie: str = None, _nome: str = None, _laudo: str = None, _obs: str = None,
                  _status: bool = None, _pontos: int = None) -> bool:
-    '''
+    """
     Todos os parâmetros, exceto o id, são opcionais. Passe somente os parâmetros que deseja alterar.
     :return: VERDADEIRO ou FALSO, dependendo do sucesso da operação.
-    '''
+    """
 
     try:
-        # with db:
-        #     aluno = Aluno.get(Aluno.id == id_)
-        #
-        #     if _serie is not None:
-        #         aluno.serie = _serie
-        #
-        #     if _nome is not None:
-        #         aluno.nome = _nome
-        #
-        #     if _laudo is not None:
-        #         aluno.laudo = _laudo
-        #
-        #     if _obs is not None:
-        #         aluno.obs = _obs
-        #
-        #     if _status is not None:
-        #         aluno.status = _status
-        #
-        #     if _pontos is not None:
-        #         aluno.pontos = _pontos
-        #
-        #     aluno.save()
-
         dados_atualizados = {
             'serie': _serie,
             'nome': _nome,
@@ -76,15 +52,13 @@ def editar_aluno(id_: int, _serie: str = None, _nome: str = None, _laudo: str = 
         return True
     except Exception as e:
         Logger.error(f'Erro ao alterar aluno: {e}')
-        raise ControleDeExcecoes('Erro ao alterar aluno', e)
-    finally:
         return False
 
 
 def ler_aluno(id_: int) -> tuple[bool, Aluno | None]:
-    '''
+    """
     :return: Retorna uma instância de Aluno. Para ler algum valor, leia os atributos desta instância. Ex.: Aluno.nome
-    '''
+    """
     try:
         with db:
             aluno = Aluno.get(Aluno.id == id_)
@@ -92,15 +66,13 @@ def ler_aluno(id_: int) -> tuple[bool, Aluno | None]:
             return True, aluno
     except Exception as e:
         Logger.error(f'Erro ao ler aluno: {e}')
-        raise ControleDeExcecoes('Erro ao ler aluno', e)
-    finally:
         return False, None
 
 
 def excluir_aluno(id_: int) -> tuple[bool, Aluno | None]:
-    '''
+    """
     :return: Tupla, sendo o primeiro item VERDADEIRO ou FALSO e o segundo item uma instância de Aluno ou None, dependendo do sucesso da operação.
-    '''
+    """
     try:
         with db:
             aluno = Aluno.get(Aluno.id == id_)
@@ -111,15 +83,13 @@ def excluir_aluno(id_: int) -> tuple[bool, Aluno | None]:
             return True, aluno
     except Exception as e:
         Logger.error(f'Erro ao excluir aluno: {e}')
-        raise ControleDeExcecoes('Erro ao excluir aluno', e)
-    finally:
         return False, None
 
 
 def adicionar_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
-    '''
+    """
     :return: VERDADEIRO OU FALSO, dependendo do sucesso da operação
-    '''
+    """
     try:
         with db:
             aluno = Aluno.get(Aluno.id == id_)
@@ -132,15 +102,13 @@ def adicionar_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
         return True
     except Exception as e:
         Logger.error(f'Erro ao adicionar_pontos: {e}')
-        raise ControleDeExcecoes('Erro ao adicionar pontos', e)
-    finally:
         return False
 
 
 def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
-    '''
+    """
     :return: VERDADEIRO OU FALSO, dependendo do sucesso da operação
-    '''
+    """
     try:
         with db:
             aluno = Aluno.get(Aluno.id == id_)
@@ -153,6 +121,4 @@ def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
         return True
     except Exception as e:
         Logger.error(f'Erro ao remover pontos: {e}')
-        raise ControleDeExcecoes('Erro ao remover pontos', e)
-    finally:
         return False

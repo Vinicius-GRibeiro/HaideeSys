@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
 from models._md_logger import Logger
-from models._md_entities import ControleDeExcecoes
 import flet_easy as fs
+from views.vw_inicio import Inicio
+
 
 load_dotenv()
 APP_FOLDER = os.path.join(os.getenv('APPDATA'), os.getenv('APPNAME'))
@@ -14,7 +15,6 @@ def init(data: fs.Datasy):
         os.makedirs(APP_FOLDER, exist_ok=True)
     except Exception as e:
         Logger.error(f'Erro ao criar pasta no sistema: {e}')
-        raise ControleDeExcecoes('Erro ao criar pasta do sistema', e)
 
     # Configurações da janela do aplicativo
     data.page.padding = 0
@@ -22,7 +22,15 @@ def init(data: fs.Datasy):
     data.page.window.center()
     data.page.window.maximizable = False
     data.page.window.resizable = False
+    data.page.fonts = {
+        'logo_iniciais': '/fonts/logo_iniciais.ttf',
+        'logo_nome': '/fonts/logo_nome.otf',
+        'nunito': '/fonts/nunito.ttf',
+    }
 
 @app.page(route="/", title="Início")
 def home_page(data: fs.Datasy):
-    return
+    init(data)
+    return Inicio(page=data.page).get
+
+app.run(assets_dir='assets')

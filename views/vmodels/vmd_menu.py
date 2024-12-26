@@ -1,11 +1,13 @@
+import os
+
 from flet import (Page, TextButton, Container, ButtonStyle, Column, CrossAxisAlignment, Row, Text, Icon,
                   padding, icons, colors)
 from dotenv import load_dotenv
 from os import getenv
 
-load_dotenv()
+from flet.core.types import FontWeight
 
-cor = {}
+load_dotenv()
 
 class Menu:
     def __init__(self, page: Page, selected_item: str):
@@ -20,7 +22,7 @@ class Menu:
                 overlay_color='transparent'
             ),
             content=Container(
-                bgcolor=cor['primary_lighter'] if self.selected_item == label else 'transparent',
+                bgcolor=colors.PRIMARY_CONTAINER if self.selected_item == label else 'transparent',
                 border_radius=10,
                 width=200,
                 content=Container(
@@ -29,17 +31,16 @@ class Menu:
                         controls=[
                             # Indicador de seleção
                             Container(height=30, width=4, border_radius=5,
-                                      bgcolor=cor['white'] if self.selected_item == label else cor[
-                                          'unselected_menu_item']),
+                                      bgcolor=colors.ON_PRIMARY_CONTAINER if self.selected_item == label else colors.ON_PRIMARY),
 
                             # Divisor de espaçamento
                             Container(width=10, height=1),
 
                             # Icone
-                            Container(content=Icon(name=icon, color=cor['white'], size=37)),
+                            Container(content=Icon(name=icon, color=colors.ON_PRIMARY_CONTAINER if self.selected_item == label else colors.ON_PRIMARY, size=37)),
 
                             # Label
-                            Container(content=Text(value=label, color=cor['white'], size=17))
+                            Container(content=Text(value=label, color=colors.ON_PRIMARY_CONTAINER if self.selected_item == label else colors.ON_PRIMARY, size=17))
                         ]
                     )
                 )
@@ -68,28 +69,53 @@ class Menu:
 
     def _get(self):
         return Column(
+            height=self.page.window.height,
             controls=[
                 Container(
-                    bgcolor=cor["primary_medium"],
+                    expand=True,
+                    bgcolor=colors.PRIMARY,
                     content=Column(
                         horizontal_alignment=CrossAxisAlignment.CENTER,
                         controls=[
 
                             # Cabeçalho - Usuário
                             Container(
-                                content=Row(
+                                content=Column(
+                                    spacing=0,
+                                    horizontal_alignment=CrossAxisAlignment.CENTER,
                                     controls=[
                                         Container(
-                                            content=Text(value=getenv('CLASSNAME'), size=25, color="#FFFFFF",
-                                                         font_family='protest'),
-                                            padding=padding.symmetric(10, 25)
+                                            content=Text(value='HS', size=70, color=colors.ON_PRIMARY,
+                                                         font_family='logo_iniciais'),
+                                            padding=padding.only(left=25, right=25, top=10),
                                         ),
+
+                                        Container(
+                                            content=Text(value='HAIDÉE SYS', size=30, color=colors.ON_PRIMARY,
+                                                         font_family='nunito', weight=FontWeight.W_800),
+                                            padding=padding.only(left=25, right=25, bottom=10, top=-20),
+                                        ),
+
+                                        Row(
+                                            controls=[
+                                                Text(value='Oficina:', color=colors.ON_PRIMARY, font_family='nunito', size=17, weight=FontWeight.W_500),
+                                                Text(value=os.getenv('CLASSNAME').capitalize(), color=colors.ON_PRIMARY, font_family='nunito', weight=FontWeight.W_300, size=15),
+                                            ]
+                                        ),
+
+                                        Row(
+                                            controls=[
+                                                Text(value='Professor:', color=colors.ON_PRIMARY, font_family='nunito', size=17, weight=FontWeight.W_500),
+                                                Text(value=os.getenv('TEACHERNAME').capitalize(), color=colors.ON_PRIMARY, font_family='nunito', weight=FontWeight.W_300, size=15),
+                                            ]
+                                        )
                                     ]
                                 )
                             ),
 
                             # Divisor do cabeçalho
-                            Container(height=.5, bgcolor=cor["white"], width=80, padding=padding.symmetric(10, 25)),
+                            Container(height=2, bgcolor='transparent', width=1),
+                            Container(height=.5, bgcolor=colors.ON_PRIMARY, width=80, padding=padding.symmetric(10, 25)),
 
                             # Botões do menu
                             Container(
@@ -106,11 +132,13 @@ class Menu:
                                         Row(controls=[self._botao_menu("Configurações", icons.SETTINGS_ROUNDED)]),
 
                                         # Divisor para o botão de saída
-                                        Container(width=200, height=1, bgcolor=colors.with_opacity(.5, cor["white"])),
+                                        # Container(width=200, height=1, bgcolor=colors.with_opacity(.5, colors.ON_PRIMARY)),
 
                                         # Botão de saída
-                                        Row(controls=[self._botao_menu("Sair", icons.EXIT_TO_APP_ROUNDED)]),
-                                        Row(height=120)
+                                        Container(
+                                            Row(controls=[self._botao_menu("Sair", icons.EXIT_TO_APP_ROUNDED)]),
+                                            padding=padding.only(top=60)
+                                        ),
                                     ]
                                 )
                             )

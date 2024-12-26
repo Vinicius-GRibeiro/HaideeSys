@@ -1,12 +1,12 @@
-from _md_entities import db, Serie, ControleDeExcecoes
+from _md_entities import db, Serie
 from _md_logger import Logger
 
 def criar_serie(serie: str) -> bool:
-    '''
+    """
 
     :param serie: série no formato Xº Y - Sendo X um número e Y uma letra
     :return: Verdadeiro ou falso
-    '''
+    """
     try:
         with db:
             Serie.create(id=serie)
@@ -14,15 +14,13 @@ def criar_serie(serie: str) -> bool:
         return True
     except Exception as e:
         Logger.error(f'Erro ao criar série ({serie}): {e}')
-        raise ControleDeExcecoes(f'Erro ao criar série ({serie})', e)
-    finally:
         return False
 
 
 def ler_series() -> tuple[bool, tuple]:
-    '''
+    """
     :return: Tupla, sendo o primeiro item VERDADEIRO ou FALSO e o segundo item, uma tupla com as séries retornadas
-    '''
+    """
 
     try:
         with db:
@@ -33,6 +31,4 @@ def ler_series() -> tuple[bool, tuple]:
         return True, series
     except Exception as e:
         Logger.error(f'Erro ao ler séries: {e}')
-        raise ControleDeExcecoes('Erro ao ler séries', e)
-    finally:
         return False, ()
