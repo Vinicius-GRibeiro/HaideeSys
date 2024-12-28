@@ -1,5 +1,5 @@
-from _md_entities import db, Serie
-from _md_logger import Logger
+from ._md_entities import db, Serie
+from ._md_logger import Logger
 
 def criar_serie(serie: str) -> bool:
     """

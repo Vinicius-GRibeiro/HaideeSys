@@ -1,4 +1,4 @@
-from flet import Page, View, Row, Container, Column, CrossAxisAlignment, colors
+from flet import Page, View, Row, Container, Column, CrossAxisAlignment
 from .vmd_menu import Menu
 
 
@@ -13,7 +13,7 @@ class ViewFactory:
         :return:
         '''
         return View(
-            spacing=0, padding=0, bgcolor=colors.BACKGROUND,
+            spacing=0, padding=0,
             controls=[
                 Row(
                     height=page.window.height,

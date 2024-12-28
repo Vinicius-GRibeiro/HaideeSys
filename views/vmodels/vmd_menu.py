@@ -1,7 +1,7 @@
 import os
 
 from flet import (Page, TextButton, Container, ButtonStyle, Column, CrossAxisAlignment, Row, Text, Icon,
-                  padding, icons, colors)
+                  padding, icons, Colors)
 from dotenv import load_dotenv
 from os import getenv
 
@@ -22,7 +22,7 @@ class Menu:
                 overlay_color='transparent'
             ),
             content=Container(
-                bgcolor=colors.PRIMARY_CONTAINER if self.selected_item == label else 'transparent',
+                bgcolor=Colors.PRIMARY_CONTAINER if self.selected_item == label else 'transparent',
                 border_radius=10,
                 width=200,
                 content=Container(
@@ -31,16 +31,16 @@ class Menu:
                         controls=[
                             # Indicador de seleção
                             Container(height=30, width=4, border_radius=5,
-                                      bgcolor=colors.ON_PRIMARY_CONTAINER if self.selected_item == label else colors.ON_PRIMARY),
+                                      bgcolor='transparent' if label == 'Sair' else Colors.ON_PRIMARY_CONTAINER if self.selected_item == label else Colors.ON_PRIMARY),
 
                             # Divisor de espaçamento
                             Container(width=10, height=1),
 
                             # Icone
-                            Container(content=Icon(name=icon, color=colors.ON_PRIMARY_CONTAINER if self.selected_item == label else colors.ON_PRIMARY, size=37)),
+                            Container(content=Icon(name=icon, color=Colors.ON_PRIMARY_CONTAINER if self.selected_item == label else Colors.ON_PRIMARY, size=37)),
 
                             # Label
-                            Container(content=Text(value=label, color=colors.ON_PRIMARY_CONTAINER if self.selected_item == label else colors.ON_PRIMARY, size=17))
+                            Container(content=Text(value=label, color=Colors.ON_PRIMARY_CONTAINER if self.selected_item == label else Colors.ON_PRIMARY, size=17))
                         ]
                     )
                 )
@@ -73,7 +73,7 @@ class Menu:
             controls=[
                 Container(
                     expand=True,
-                    bgcolor=colors.PRIMARY,
+                    bgcolor=Colors.PRIMARY,
                     content=Column(
                         horizontal_alignment=CrossAxisAlignment.CENTER,
                         controls=[
@@ -85,28 +85,28 @@ class Menu:
                                     horizontal_alignment=CrossAxisAlignment.CENTER,
                                     controls=[
                                         Container(
-                                            content=Text(value='HS', size=70, color=colors.ON_PRIMARY,
+                                            content=Text(value='HS', size=70, color=Colors.ON_PRIMARY,
                                                          font_family='logo_iniciais'),
                                             padding=padding.only(left=25, right=25, top=10),
                                         ),
 
                                         Container(
-                                            content=Text(value='HAIDÉE SYS', size=30, color=colors.ON_PRIMARY,
+                                            content=Text(value='HAIDÉE SYS', size=30, color=Colors.ON_PRIMARY,
                                                          font_family='nunito', weight=FontWeight.W_800),
                                             padding=padding.only(left=25, right=25, bottom=10, top=-20),
                                         ),
 
                                         Row(
                                             controls=[
-                                                Text(value='Oficina:', color=colors.ON_PRIMARY, font_family='nunito', size=17, weight=FontWeight.W_500),
-                                                Text(value=os.getenv('CLASSNAME').capitalize(), color=colors.ON_PRIMARY, font_family='nunito', weight=FontWeight.W_300, size=15),
+                                                Text(value='Oficina:', color=Colors.ON_PRIMARY, font_family='nunito', size=17, weight=FontWeight.W_500),
+                                                Text(value=os.getenv('CLASSNAME').capitalize(), color=Colors.ON_PRIMARY, font_family='nunito', weight=FontWeight.W_300, size=15),
                                             ]
                                         ),
 
                                         Row(
                                             controls=[
-                                                Text(value='Professor:', color=colors.ON_PRIMARY, font_family='nunito', size=17, weight=FontWeight.W_500),
-                                                Text(value=os.getenv('TEACHERNAME').capitalize(), color=colors.ON_PRIMARY, font_family='nunito', weight=FontWeight.W_300, size=15),
+                                                Text(value='Professor:', color=Colors.ON_PRIMARY, font_family='nunito', size=17, weight=FontWeight.W_500),
+                                                Text(value=os.getenv('TEACHERNAME').capitalize(), color=Colors.ON_PRIMARY, font_family='nunito', weight=FontWeight.W_300, size=15),
                                             ]
                                         )
                                     ]
@@ -115,7 +115,7 @@ class Menu:
 
                             # Divisor do cabeçalho
                             Container(height=2, bgcolor='transparent', width=1),
-                            Container(height=.5, bgcolor=colors.ON_PRIMARY, width=80, padding=padding.symmetric(10, 25)),
+                            Container(height=.5, bgcolor=Colors.ON_PRIMARY, width=80, padding=padding.symmetric(10, 25)),
 
                             # Botões do menu
                             Container(
@@ -129,16 +129,21 @@ class Menu:
                                         Row(controls=[self._botao_menu("Alunos", icons.FACE_ROUNDED)]),
                                         Row(controls=[self._botao_menu("Turmas", icons.PEOPLE_ROUNDED)]),
                                         Row(controls=[self._botao_menu("Ocorrências", icons.ASSIGNMENT_ROUNDED)]),
+                                        Row(controls=[self._botao_menu("Pontos", icons.SCOREBOARD)]),
                                         Row(controls=[self._botao_menu("Configurações", icons.SETTINGS_ROUNDED)]),
 
-                                        # Divisor para o botão de saída
-                                        # Container(width=200, height=1, bgcolor=colors.with_opacity(.5, colors.ON_PRIMARY)),
 
-                                        # Botão de saída
                                         Container(
-                                            Row(controls=[self._botao_menu("Sair", icons.EXIT_TO_APP_ROUNDED)]),
-                                            padding=padding.only(top=60)
+                                            content=Column(
+                                                controls=[
+                                                    Container(width=200, height=2, bgcolor=Colors.with_opacity(.5, Colors.ON_PRIMARY)),
+                                                    Row(controls=[self._botao_menu("Sair", icons.EXIT_TO_APP_ROUNDED)]),
+                                                ],
+                                                horizontal_alignment=CrossAxisAlignment.CENTER
+                                            ),
+                                            padding=padding.only(top=15),
                                         ),
+
                                     ]
                                 )
                             )

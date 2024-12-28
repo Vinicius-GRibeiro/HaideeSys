@@ -1,34 +1,168 @@
-from _md_entities import db, Aluno, Pontuacao
-from _md_logger import Logger
+from peewee import DoesNotExist
+from ._md_entities import db, Aluno, Pontuacao
+from ._md_logger import Logger
+
+# def criar_aluno(serie: str, nome: str, laudo: str = None, obs: str = None) -> tuple[bool, int | None]:
+#     """
+#     :return: Tupla, sendo o primeiro item, VERDADEIRO ou FALSO e o segundo item, o id do aluno criado ou None, caso algum erro ocorra
+#     """
+#     try:
+#         with db:
+#             aluno = Aluno.create(
+#                 serie=serie,
+#                 nome=nome,
+#                 laudo=laudo,
+#                 obs=obs,
+#             )
+#         Logger.info(f'Aluno criado ({aluno.id} - {aluno.serie_id} - {aluno.nome})')
+#         return True, aluno.id
+#     except Exception as e:
+#         Logger.error(f'Erro ao criar aluno: {e}')
+#         return False, None
+#
+#
+#
+# def editar_aluno(id_: int, _serie: str = None, _nome: str = None, _laudo: str = None, _obs: str = None,
+#                  _status: bool = None, _pontos: int = None) -> bool:
+#     """
+#     Todos os parâmetros, exceto o id, são opcionais. Passe somente os parâmetros que deseja alterar.
+#     :return: VERDADEIRO ou FALSO, dependendo do sucesso da operação.
+#     """
+#
+#     try:
+#         dados_atualizados = {
+#             'serie': _serie,
+#             'nome': _nome,
+#             'laudo': _laudo,
+#             'obs': _obs,
+#             'status': _status,
+#             'pontos': _pontos
+#         }
+#
+#         # Filtrar campos não nulos
+#         dados_atualizados = {key: value for key, value in dados_atualizados.items() if value is not None}
+#
+#         if dados_atualizados:  # Verifica se há algum campo para atualizar
+#             with db:
+#                 Aluno.update(dados_atualizados).where(Aluno.id == id_).execute()
+#
+#             Logger.info(f'Aluno {id_} alterado com sucesso')
+#             return True
+#
+#         Logger.info(f'Aluno alterado')
+#         return True
+#     except Exception as e:
+#         Logger.error(f'Erro ao alterar aluno: {e}')
+#         return False
+#
+#
+# def ler_aluno(id_: int = None, serie: str = None) -> tuple[bool, list[Aluno] | None]:
+#     """
+#     :return: Retorna uma lista de instâncias de Aluno. Para ler algum valor, leia os atributos desta instância. Ex.: Aluno.nome
+#     """
+#     if id_ is not None and serie is not None:
+#         Logger.error("Parâmetros 'id_' e 'serie' não podem ser usados simultaneamente.")
+#         return False, None
+#
+#     try:
+#         with db:
+#             if id_ is not None:
+#                 aluno = [Aluno.get(Aluno.id == id_)]
+#             elif serie is not None:
+#                 aluno = list(Aluno.select().where(Aluno.serie == serie).order_by(Aluno.nome))
+#             else:
+#                 aluno = list(Aluno.select().order_by(Aluno.nome))
+#
+#         if aluno:
+#             return True, aluno
+#     except Exception as e:
+#         Logger.error(f'Erro ao ler aluno: {e}')
+#         return False, None
+#
+#
+# def excluir_aluno(id_: int) -> tuple[bool, Aluno | None]:
+#     """
+#     :return: Tupla, sendo o primeiro item VERDADEIRO ou FALSO e o segundo item uma instância de Aluno ou None, dependendo do sucesso da operação.
+#     """
+#     try:
+#         with db:
+#             aluno = Aluno.get(Aluno.id == id_)
+#
+#         if aluno:
+#             aluno.delete_instance()
+#             Logger.info(f'Aluno excluído ({aluno.id} - {aluno.nome} - {aluno.serie_id})')
+#             return True, aluno
+#     except Exception as e:
+#         Logger.error(f'Erro ao excluir aluno: {e}')
+#         return False, None
+#
+#
+# def adicionar_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
+#     """
+#     :return: VERDADEIRO OU FALSO, dependendo do sucesso da operação
+#     """
+#     try:
+#         with db:
+#             aluno = Aluno.get(Aluno.id == id_)
+#             Pontuacao.create(aluno=aluno.id,serie=aluno.serie_id, tipo=True, descricao=descricao,
+#                              quantidade_pontos=qntd_pontos, total_antes=aluno.pontos,
+#                              total_apos=aluno.pontos + qntd_pontos)
+#             aluno.pontos += qntd_pontos
+#             aluno.save()
+#             Logger.info(f'Pontos (+{qntd_pontos}) adicionados para o aluno ({aluno.id} - {aluno.serie_id} - {aluno.nome})')
+#         return True
+#     except Exception as e:
+#         Logger.error(f'Erro ao adicionar_pontos: {e}')
+#         return False
+#
+#
+# def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
+#     """
+#     :return: VERDADEIRO OU FALSO, dependendo do sucesso da operação
+#     """
+#     try:
+#         with db:
+#             aluno = Aluno.get(Aluno.id == id_)
+#             Pontuacao.create(aluno=aluno.id,serie=aluno.serie_id, tipo=False, descricao=descricao,
+#                              quantidade_pontos=qntd_pontos, total_antes=aluno.pontos,
+#                              total_apos=aluno.pontos - qntd_pontos)
+#             aluno.pontos -= qntd_pontos
+#             aluno.save()
+#             Logger.info(f'Pontos (-{qntd_pontos}) removidos do aluno ({aluno.id} - {aluno.serie_id} - {aluno.nome})')
+#         return True
+#     except Exception as e:
+#         Logger.error(f'Erro ao remover pontos: {e}')
+#         return False
 
 def criar_aluno(serie: str, nome: str, laudo: str = None, obs: str = None) -> tuple[bool, int | None]:
     """
-    :return: Tupla, sendo o primeiro item, VERDADEIRO ou FALSO e o segundo item, o id do aluno criado ou None, caso algum erro ocorra
+    Cria um novo aluno no banco de dados.
+    :return: Tupla (sucesso, ID do aluno criado ou None em caso de falha).
     """
+    if not serie or not nome:
+        Logger.error("Série e nome são obrigatórios para criar um aluno.")
+        return False, None
+
     try:
         with db:
-            aluno = Aluno.create(
-                serie=serie,
-                nome=nome,
-                laudo=laudo,
-                obs=obs,
-            )
+            aluno = Aluno.create(serie=serie, nome=nome, laudo=laudo, obs=obs)
         Logger.info(f'Aluno criado ({aluno.id} - {aluno.serie_id} - {aluno.nome})')
         return True, aluno.id
     except Exception as e:
         Logger.error(f'Erro ao criar aluno: {e}')
         return False, None
 
-
-
 def editar_aluno(id_: int, _serie: str = None, _nome: str = None, _laudo: str = None, _obs: str = None,
                  _status: bool = None, _pontos: int = None) -> bool:
     """
-    Todos os parâmetros, exceto o id, são opcionais. Passe somente os parâmetros que deseja alterar.
-    :return: VERDADEIRO ou FALSO, dependendo do sucesso da operação.
+    Edita informações de um aluno existente.
+    :return: True se a operação for bem-sucedida, False caso contrário.
     """
-
     try:
+        if not Aluno.select().where(Aluno.id == id_).exists():
+            Logger.error(f"Aluno com ID {id_} não encontrado.")
+            return False
+
         dados_atualizados = {
             'serie': _serie,
             'nome': _nome,
@@ -38,86 +172,113 @@ def editar_aluno(id_: int, _serie: str = None, _nome: str = None, _laudo: str = 
             'pontos': _pontos
         }
 
-        # Filtrar campos não nulos
         dados_atualizados = {key: value for key, value in dados_atualizados.items() if value is not None}
 
-        if dados_atualizados:  # Verifica se há algum campo para atualizar
+        if dados_atualizados:
             with db:
                 Aluno.update(dados_atualizados).where(Aluno.id == id_).execute()
-
-            Logger.info(f'Aluno {id_} alterado com sucesso')
+            Logger.info(f'Aluno {id_} alterado com sucesso: {dados_atualizados}')
             return True
 
-        Logger.info(f'Aluno alterado')
+        Logger.warning(f"Nenhuma alteração realizada para o aluno {id_}.")
         return True
     except Exception as e:
         Logger.error(f'Erro ao alterar aluno: {e}')
         return False
 
+def ler_aluno(id_: int = None, serie: str = None) -> tuple[bool, list[Aluno] | None]:
+    """
+    Lê registros de alunos do banco de dados, ordenados por nome.
+    :return: Tupla (sucesso, lista de alunos ou None).
+    """
+    if id_ is not None and serie is not None:
+        Logger.error("Parâmetros 'id_' e 'serie' não podem ser usados simultaneamente.")
+        return False, None
 
-def ler_aluno(id_: int) -> tuple[bool, Aluno | None]:
-    """
-    :return: Retorna uma instância de Aluno. Para ler algum valor, leia os atributos desta instância. Ex.: Aluno.nome
-    """
     try:
         with db:
-            aluno = Aluno.get(Aluno.id == id_)
+            if id_ is not None:
+                aluno = [Aluno.get(Aluno.id == id_)]
+            elif serie is not None:
+                aluno = list(Aluno.select().where(Aluno.serie == serie).order_by(Aluno.nome))
+            else:
+                aluno = list(Aluno.select().order_by(Aluno.nome))
+
         if aluno:
             return True, aluno
+        Logger.warning("Nenhum aluno encontrado.")
+        return True, []
+    except DoesNotExist:
+        Logger.warning(f"Aluno com ID {id_} não encontrado.")
+        return False, []
     except Exception as e:
         Logger.error(f'Erro ao ler aluno: {e}')
         return False, None
 
-
 def excluir_aluno(id_: int) -> tuple[bool, Aluno | None]:
     """
-    :return: Tupla, sendo o primeiro item VERDADEIRO ou FALSO e o segundo item uma instância de Aluno ou None, dependendo do sucesso da operação.
+    Exclui um aluno do banco de dados.
+    :return: Tupla (sucesso, instância do aluno ou None).
     """
     try:
         with db:
             aluno = Aluno.get(Aluno.id == id_)
 
-        if aluno:
-            aluno.delete_instance()
-            Logger.info(f'Aluno excluído ({aluno.id} - {aluno.nome} - {aluno.serie_id})')
-            return True, aluno
+        aluno.delete_instance()
+        Logger.info(f'Aluno excluído ({aluno.id} - {aluno.nome} - {aluno.serie_id})')
+        return True, aluno
+    except DoesNotExist:
+        Logger.warning(f"Aluno com ID {id_} não encontrado.")
+        return False, None
     except Exception as e:
         Logger.error(f'Erro ao excluir aluno: {e}')
         return False, None
 
-
 def adicionar_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
-    """
-    :return: VERDADEIRO OU FALSO, dependendo do sucesso da operação
-    """
-    try:
-        with db:
-            aluno = Aluno.get(Aluno.id == id_)
-            Pontuacao.create(aluno=aluno.id,serie=aluno.serie_id, tipo=True, descricao=descricao,
-                             quantidade_pontos=qntd_pontos, total_antes=aluno.pontos,
-                             total_apos=aluno.pontos + qntd_pontos)
-            aluno.pontos += qntd_pontos
-            aluno.save()
-            Logger.info(f'Pontos (+{qntd_pontos}) adicionados para o aluno ({aluno.id} - {aluno.serie_id} - {aluno.nome})')
-        return True
-    except Exception as e:
-        Logger.error(f'Erro ao adicionar_pontos: {e}')
+    if qntd_pontos <= 0:
+        Logger.error("Quantidade de pontos deve ser maior que zero.")
         return False
 
-
-def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
-    """
-    :return: VERDADEIRO OU FALSO, dependendo do sucesso da operação
-    """
     try:
         with db:
             aluno = Aluno.get(Aluno.id == id_)
-            Pontuacao.create(aluno=aluno.id,serie=aluno.serie_id, tipo=False, descricao=descricao,
-                             quantidade_pontos=qntd_pontos, total_antes=aluno.pontos,
-                             total_apos=aluno.pontos - qntd_pontos)
+            Pontuacao.create(
+                aluno=aluno.id,
+                serie=aluno.serie_id,
+                tipo=True,
+                descricao=descricao,
+                quantidade_pontos=qntd_pontos,
+                total_antes=aluno.pontos,
+                total_apos=aluno.pontos + qntd_pontos
+            )
+            aluno.pontos += qntd_pontos
+            aluno.save()
+        Logger.info(f'Pontos (+{qntd_pontos}) adicionados ao aluno {aluno.nome}.')
+        return True
+    except Exception as e:
+        Logger.error(f'Erro ao adicionar pontos: {e}')
+        return False
+
+def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
+    if qntd_pontos <= 0:
+        Logger.error("Quantidade de pontos deve ser maior que zero.")
+        return False
+
+    try:
+        with db:
+            aluno = Aluno.get(Aluno.id == id_)
+            Pontuacao.create(
+                aluno=aluno.id,
+                serie=aluno.serie_id,
+                tipo=False,
+                descricao=descricao,
+                quantidade_pontos=qntd_pontos,
+                total_antes=aluno.pontos,
+                total_apos=aluno.pontos - qntd_pontos
+            )
             aluno.pontos -= qntd_pontos
             aluno.save()
-            Logger.info(f'Pontos (-{qntd_pontos}) removidos do aluno ({aluno.id} - {aluno.serie_id} - {aluno.nome})')
+        Logger.info(f'Pontos (-{qntd_pontos}) removidos do aluno {aluno.nome}.')
         return True
     except Exception as e:
         Logger.error(f'Erro ao remover pontos: {e}')

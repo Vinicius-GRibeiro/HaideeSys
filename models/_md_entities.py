@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from peewee import (
     PostgresqlDatabase, Model, CharField, AutoField, IntegerField,
-    BooleanField, ForeignKeyField, TextField, DateField
+    BooleanField, ForeignKeyField, TextField, DateField, DateTimeField
 )
 
 # Carregar variáveis do arquivo .env
@@ -22,8 +22,56 @@ db = PostgresqlDatabase(
 
 # Classe base
 class BaseModel(Model):
+    created_at = DateTimeField(default=datetime.now, index=True)
+    updated_at = DateTimeField(default=datetime.now, index=True)
+
     class Meta:
         database = db
+
+    @classmethod
+    def criar_tabela_com_gatilhos(cls):
+        """
+        Cria a tabela e adiciona triggers para os campos created_at e updated_at no PostgreSQL.
+        """
+        # Criar a tabela normalmente
+        db.create_tables([cls])
+
+        # Nome da tabela e campo atualizado
+        table_name = cls._meta.table_name
+        updated_at_field = 'updated_at'
+
+        # SQL para criar a função de trigger
+        trigger_function_sql = f"""
+        CREATE OR REPLACE FUNCTION {table_name}_updated_at_trigger()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.{updated_at_field} = CURRENT_TIMESTAMP;
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+        """
+
+        # SQL para criar o trigger condicionalmente
+        trigger_sql = f"""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM pg_trigger
+                WHERE tgname = '{table_name}_update_trigger'
+            ) THEN
+                CREATE TRIGGER {table_name}_update_trigger
+                BEFORE UPDATE ON {table_name}
+                FOR EACH ROW
+                EXECUTE FUNCTION {table_name}_updated_at_trigger();
+            END IF;
+        END;
+        $$;
+        """
+
+        # Executar os comandos SQL
+        db.execute_sql(trigger_function_sql)  # Criar/atualizar a função de trigger
+        db.execute_sql(trigger_sql)  # Criar o trigger, se não existir
 
 
 # Tabela: Serie
@@ -103,7 +151,12 @@ class Pontuacao(BaseModel):
 def criar_tabelas():
     try:
         with db:
-            db.create_tables([Serie, Aluno, Chamada, EntradaChamada, Ocorrencia, Pontuacao])
+            Serie.criar_tabela_com_gatilhos()
+            Aluno.criar_tabela_com_gatilhos()
+            Chamada.criar_tabela_com_gatilhos()
+            EntradaChamada.criar_tabela_com_gatilhos()
+            Ocorrencia.criar_tabela_com_gatilhos()
+            Pontuacao.criar_tabela_com_gatilhos()
             Logger.info('Tabelas criada com sucesso!')
     except Exception as e:
             Logger.error(f'Erro ao criar tabelas: {e}')

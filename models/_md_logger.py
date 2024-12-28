@@ -19,6 +19,7 @@ class Logger:
     info_log_file = os.path.join(_log_dir, 'info.log')
     error_log_file = os.path.join(_log_dir, 'error.log')
     debug_log_file = os.path.join(_log_dir, 'debug.log')
+    warning_log_file = os.path.join(_log_dir, 'warning.log')
 
     @staticmethod
     def _setup_logger(name: str, log_file: str, level: int) -> logging.Logger:
@@ -79,6 +80,20 @@ class Logger:
         os.makedirs(cls._log_dir, exist_ok=True)
         logger = cls._setup_logger('ERROR', cls.error_log_file, logging.ERROR)
         logger.error(message)
+
+        # Preparar notificação em tempo real
+        cls._notify_error(message)
+
+    @classmethod
+    def warning(cls, message: str):
+        """
+        Registra uma mensagem de aviso no arquivo de logs AVISOS e prepara envio em tempo real.
+
+        :param message: Mensagem a ser registrada.
+        """
+        os.makedirs(cls._log_dir, exist_ok=True)
+        logger = cls._setup_logger('WARNING', cls.error_log_file, logging.ERROR)
+        logger.warning(message)
 
         # Preparar notificação em tempo real
         cls._notify_error(message)
