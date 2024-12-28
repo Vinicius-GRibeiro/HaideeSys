@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from _md_logger import Logger
+from ._md_logger import Logger
 import os
 from datetime import datetime
 from peewee import (

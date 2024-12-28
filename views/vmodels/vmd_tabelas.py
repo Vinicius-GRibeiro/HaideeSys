@@ -76,7 +76,7 @@ class TabelaAlunos(_Tabela):
                         DataCell(Text(value=item)) for item in valor
                     ],
                     on_select_changed=lambda e: self._on_row_click(e),
-                    color=Colors.with_opacity(opacity=.1, color=Colors.SHADOW) if valor[-1] == 'inativo' else Colors.with_opacity(
+                    color=Colors.ERROR_CONTAINER if valor[-1] == 'inativo' else Colors.with_opacity(
                         opacity=.05, color=Colors.PRIMARY_CONTAINER),
                 )
             )

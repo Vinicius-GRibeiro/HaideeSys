@@ -1,9 +1,9 @@
-from flet import Dropdown, Page, Colors, dropdown, TextStyle, InputBorder, FontWeight, ControlEvent
+from flet import Dropdown, Page, Colors, dropdown, TextStyle, InputBorder, FontWeight, ControlEvent, padding, alignment
 from abc import ABC, abstractmethod
 from models.md_serie import ler_series
 from models.md_aluno import ler_aluno
 
-ALTURA_PADRAO = 45
+ALTURA_PADRAO = 35
 LARGURA_PADRAO = 100
 RAIO_BORDA = 7
 EXPESSURA_BORDA = 1
@@ -34,7 +34,7 @@ class _Escolha(ABC):
             width=self.largura,
             text_style=TextStyle(font_family='nunito', color=Colors.PRIMARY, weight=FontWeight.W_500),
             label_style=TextStyle(font_family='nunito', color=Colors.PRIMARY, weight=FontWeight.W_700),
-            fill_color=Colors.with_opacity(opacity=.1, color=Colors.PRIMARY),  # Cor bo botão
+            fill_color=Colors.with_opacity(opacity=.1, color=Colors.PRIMARY),
             icon_enabled_color=Colors.PRIMARY,
             border=InputBorder.UNDERLINE,
             border_radius=RAIO_BORDA,
@@ -42,6 +42,7 @@ class _Escolha(ABC):
             border_width=EXPESSURA_BORDA,
             focused_border_width=EXPESSURA_BORDA_FOCADA,
             on_change=lambda e: self._on_change(e),
+            content_padding=padding.only(bottom=13, left=5),
         )
 
     @abstractmethod

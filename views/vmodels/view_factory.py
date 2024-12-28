@@ -28,9 +28,10 @@ class ViewFactory:
 
                         Container(
                             content=Column(
-                                spacing=10, horizontal_alignment=CrossAxisAlignment.CENTER,
+                                spacing=10, horizontal_alignment=CrossAxisAlignment.START,
                                 controls=view_controls
-                            )
+                            ),
+                            padding=20
                         )
                     ]
                 )

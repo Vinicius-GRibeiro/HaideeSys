@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 from flet import Theme, Colors
+from flet.core.types import ThemeMode
+
 from models._md_logger import Logger
 import flet_easy as fs
 from views.vw_inicio import Inicio
@@ -29,11 +31,20 @@ def init(data: fs.Datasy):
     data.page.window.maximizable = False
     data.page.window.resizable = False
     data.page.theme = Theme(color_scheme_seed=Colors.TEAL)
+    data.page.theme_mode = ThemeMode.LIGHT
     data.page.fonts = {
         'logo_iniciais': '/fonts/logo_iniciais.ttf',
         'logo_nome': '/fonts/logo_nome.otf',
         'nunito': '/fonts/nunito.ttf',
     }
+
+    # def handle_window_event(e):
+    #     if e.data == "close":
+    #         # TODO: Implementar confirmação de saída e rotinas de logout
+    #         data.page.window.destroy()
+    #
+    # data.page.window.prevent_close = True
+    # data.page.window.on_event = handle_window_event
 
 @app.page(route="/", title="Início")
 def home_page(data: fs.Datasy):

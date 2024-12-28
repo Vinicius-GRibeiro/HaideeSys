@@ -283,3 +283,40 @@ def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
     except Exception as e:
         Logger.error(f'Erro ao remover pontos: {e}')
         return False
+
+# alunos = [
+#     ["Ana Clara", "1A", None, None],
+#     ["Bruno Henrique", "1B", "Dislexia", "Precisa de acompanhamento especial"],
+#     ["Camila Souza", "1C", None, None],
+#     ["Diego Martins", "1A", None, None],
+#     ["Eduarda Oliveira", "1B", None, None],
+#     ["Felipe Santos", "1C", "Déficit de atenção", "Monitoramento semanal recomendado"],
+#     ["Gabriel Costa", "1A", None, None],
+#     ["Heloísa Lima", "1B", None, None],
+#     ["Igor Monteiro", "1C", "Autismo leve", "Recomenda-se apoio pedagógico adicional"],
+#     ["Joana Silva", "1A", None, None],
+#     ["Lucas Pereira", "1B", None, None],
+#     ["Mariana Almeida", "1C", "Hiperatividade", "Dificuldade em manter o foco"],
+#     ["Nicolas Ferreira", "1A", None, None],
+#     ["Olivia Mendes", "1B", None, None],
+#     ["Pedro Rocha", "1C", None, None],
+#     ["Quésia Matos", "1A", None, None],
+#     ["Rafael Dias", "1B", "Transtorno de ansiedade", "Monitoramento psicológico necessário"],
+#     ["Sophia Santos", "1C", None, None],
+#     ["Thiago Moreira", "1A", None, None],
+#     ["Ursula Correia", "1B", None, None],
+#     ["Victor Nogueira", "1C", "Dislexia", "Precisa de acompanhamento especial"],
+#     ["Wesley Ribeiro", "1A", None, None],
+#     ["Ximena Lopes", "1B", None, None],
+#     ["Yasmin Cruz", "1C", None, None],
+#     ["Zeca Oliveira", "1A", None, None],
+#     ["Arthur Ramos", "1B", "Déficit de atenção", "Monitoramento semanal recomendado"],
+#     ["Beatriz Castro", "1C", None, None],
+#     ["Caio Cunha", "1A", None, None],
+#     ["Daniela Ribeiro", "1B", None, None],
+#     ["Eduardo Farias", "1C", None, None],
+# ]
+#
+#
+# for aluno in alunos:
+#     criar_aluno(aluno[1], aluno[0], aluno[2], aluno[3])
