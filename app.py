@@ -53,31 +53,31 @@ def home_page(data: fs.Datasy):
 
 
 @app.page(route="/alunos", title="Alunos")
-def home_page(data: fs.Datasy):
+def alunos_page(data: fs.Datasy):
     init(data)
     return Alunos(page=data.page).get
 
 
 @app.page(route="/turmas", title="Turmas")
-def home_page(data: fs.Datasy):
+def turmas_page(data: fs.Datasy):
     init(data)
     return Turmas(page=data.page).get
 
 
 @app.page(route="/ocorrencias", title="Ocorrências")
-def home_page(data: fs.Datasy):
+def ocorrencias_page(data: fs.Datasy):
     init(data)
     return Ocorrencias(page=data.page).get
 
 
 @app.page(route="/pontos", title="Pontos")
-def home_page(data: fs.Datasy):
+def pontos_page(data: fs.Datasy):
     init(data)
     return Pontos(page=data.page).get
 
 
 @app.page(route="/config", title="Configurações")
-def home_page(data: fs.Datasy):
+def config_page(data: fs.Datasy):
     init(data)
     return Configuracoes(page=data.page).get
 
