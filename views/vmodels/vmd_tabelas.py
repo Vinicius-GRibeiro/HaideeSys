@@ -67,8 +67,22 @@ class TabelaAlunos(_Tabela):
 
             self.populate_table(lista_alunos)
 
-    def populate_table(self, valores: list[list | tuple]):
+    def populate_table(self, valores: list[list | tuple] = None):
         self.get.rows.clear()
+
+        if valores is None:
+            alunos = ler_aluno()
+            lista_alunos = []
+
+            if alunos[0]:
+                for aluno in alunos[1]:
+                    lista_alunos.append(
+                        [aluno.id, aluno.serie, aluno.nome, aluno.pontos, 'ativo' if aluno.status else 'inativo'])
+
+                self.populate_table(lista_alunos)
+            self.page.update()
+            return
+
         for valor in valores:
             self.get.rows.append(
                 DataRow(

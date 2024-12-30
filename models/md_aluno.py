@@ -186,23 +186,65 @@ def editar_aluno(id_: int, _serie: str = None, _nome: str = None, _laudo: str = 
         Logger.error(f'Erro ao alterar aluno: {e}')
         return False
 
-def ler_aluno(id_: int = None, serie: str = None) -> tuple[bool, list[Aluno] | None]:
+# def ler_aluno(id_: int = None, serie: str = None, nome: str = None) -> tuple[bool, list[Aluno] | None]:
+#     """
+#     Lê registros de alunos do banco de dados, ordenados por nome.
+#     :return: Tupla (sucesso, lista de alunos ou None).
+#     """
+#     if id_ is not None and serie is not None:
+#         Logger.error("Parâmetros 'id_' e 'serie' não podem ser usados simultaneamente.")
+#         return False, None
+#
+#     try:
+#         with db:
+#             if id_ is not None:
+#                 aluno = [Aluno.get(Aluno.id == id_)]
+#             elif serie is not None:
+#                 aluno = list(Aluno.select().where(Aluno.serie == serie).order_by(Aluno.nome))
+#             else:
+#                 aluno = list(Aluno.select().order_by(Aluno.nome))
+#
+#         if aluno:
+#             return True, aluno
+#         Logger.warning("Nenhum aluno encontrado.")
+#         return True, []
+#     except DoesNotExist:
+#         Logger.warning(f"Aluno com ID {id_} não encontrado.")
+#         return False, []
+#     except Exception as e:
+#         Logger.error(f'Erro ao ler aluno: {e}')
+#         return False, None
+
+def ler_aluno(id_: int = None, serie: str = None, nome: str = None, ordenar_por: str = 'nome') -> tuple[bool, list[Aluno] | None]:
     """
     Lê registros de alunos do banco de dados, ordenados por nome.
+    Permite filtrar por ID, série e/ou nome simultaneamente.
     :return: Tupla (sucesso, lista de alunos ou None).
     """
-    if id_ is not None and serie is not None:
-        Logger.error("Parâmetros 'id_' e 'serie' não podem ser usados simultaneamente.")
-        return False, None
-
     try:
         with db:
+            query = Aluno.select()
+
             if id_ is not None:
-                aluno = [Aluno.get(Aluno.id == id_)]
-            elif serie is not None:
-                aluno = list(Aluno.select().where(Aluno.serie == serie).order_by(Aluno.nome))
-            else:
-                aluno = list(Aluno.select().order_by(Aluno.nome))
+                query = query.where(Aluno.id == id_)
+
+            if serie is not None:
+                query = query.where(Aluno.serie == serie)
+
+            if nome is not None:
+                query = query.where(Aluno.nome.ilike(f"%{nome}%"))
+
+            match ordenar_por:
+                case 'nome':
+                    query = query.order_by(Aluno.nome.asc())
+                case 'serie':
+                    query = query.order_by(Aluno.serie.asc())
+                case 'pontos':
+                    query = query.order_by(Aluno.pontos.asc())
+                case 'status':
+                    query = query.order_by(Aluno.status.asc())
+
+            aluno = list(query)
 
         if aluno:
             return True, aluno
@@ -214,6 +256,7 @@ def ler_aluno(id_: int = None, serie: str = None) -> tuple[bool, list[Aluno] | N
     except Exception as e:
         Logger.error(f'Erro ao ler aluno: {e}')
         return False, None
+
 
 def excluir_aluno(id_: int) -> tuple[bool, Aluno | None]:
     """

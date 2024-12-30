@@ -20,6 +20,9 @@ class _Escolha(ABC):
         self.get = self._get()
 
 
+    def valor(self):
+        return self.get.value
+
     def populate_dropdown(self, options: list[str]):
         for option in options:
             self.get.options.append(

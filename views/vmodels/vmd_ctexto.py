@@ -18,6 +18,9 @@ class _CTexto(ABC):
 
         self.get = self._get()
 
+    def valor(self):
+        return self.get.value
+
     def _get(self) -> TextField:
         return TextField(
             label=self.label,
