@@ -4,6 +4,7 @@ from .vmodels.vmd_tabelas import TabelaAlunos
 from .vmodels.vmd_escolhas import EscolhaSerie
 from .vmodels.vmd_ctexto import CTexto
 from .vmodels.vmd_botoes import BotaoTextoSalvarAluno, BotaoRadio, BotaoIconePesquisarAluno, BotaoIconeLimparFiltros
+from .vmodels.vmd_detalhes import DetalhesAluno
 
 
 class Alunos:
@@ -25,6 +26,8 @@ class Alunos:
         self.btn_radio_filtros.get.value = 'nome'
         self.btn_pesquisar_aluno = BotaoIconePesquisarAluno(page=self.page, icone=icons.SEARCH_ROUNDED, ctrl_serie=self.escolha_serie_pesquisa, ctrl_nome=self.nome_pesquisa, ctrl_ordenar_por=self.btn_radio_filtros, ctrl_tabela=self.tabela)
         self.btn_limpar_filtros = BotaoIconeLimparFiltros(page=self.page, icone=icons.REFRESH_ROUNDED, ctrl_tabela=self.tabela, controles=[self.escolha_serie_pesquisa, self.nome_pesquisa], controle_radio=self.btn_radio_filtros)
+
+        self.detalhes_aluno = DetalhesAluno(page=self.page)
 
         self.get = ViewFactory.get_view(page, view_controls=[
             self.container_adicionar_aluno(),

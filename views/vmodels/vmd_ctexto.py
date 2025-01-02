@@ -8,13 +8,16 @@ EXPESSURA_BORDA = 1
 EXPESSURA_BORDA_FOCADA = 3
 
 class _CTexto(ABC):
-    def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO, senha: bool = False):
+    def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO,
+                 senha: bool = False, somente_leitura: bool = False, valor_padrao: str = None):
         self.page = page
 
         self.label = label
         self.altura = altura
         self.largura = largura
         self.senha= senha
+        self.somente_leitura = somente_leitura
+        self.valor_padrao = valor_padrao
 
         self.get = self._get()
 
@@ -38,9 +41,11 @@ class _CTexto(ABC):
             cursor_width=.6,
             bgcolor=Colors.with_opacity(opacity=.1, color=Colors.PRIMARY),
             content_padding=padding.only(bottom=15, left=5),
-
+            read_only=self.somente_leitura,
+            value=self.valor_padrao
         )
 
 class CTexto(_CTexto):
-    def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO):
-        super().__init__(page, label, altura, largura)
+    def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO,
+                 senha: bool = False, somente_leitura: bool = False, valor_padrao: str = None):
+        super().__init__(page, label, altura, largura, senha, somente_leitura, valor_padrao)

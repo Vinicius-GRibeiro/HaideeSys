@@ -54,9 +54,10 @@ class _Escolha(ABC):
 
 
 class EscolhaSerie(_Escolha):
-    def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO):
+    def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO, valor_padrao = None):
         super().__init__(page, label, altura, largura)
         self.populate_dropdown(ler_series()[1])  # type: ignore
+        self.get.value = valor_padrao
 
     def _on_change(self, e):
         pass

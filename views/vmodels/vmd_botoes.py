@@ -3,7 +3,7 @@ from flet import (TextButton, Row, Page, ButtonStyle, Colors, ControlState, Roun
 from abc import ABC, abstractmethod
 from .vmd_ctexto import CTexto
 from .vmd_escolhas import EscolhaSerie
-from models.md_aluno import criar_aluno, ler_aluno
+from models.md_aluno import criar_aluno, ler_aluno, editar_aluno
 from .vmd_tabelas import TabelaAlunos
 from .vmd_notificacao import Notificacao
 
@@ -116,7 +116,6 @@ class BotaoRadio:
         )
 
 
-
 class BotaoIconePesquisarAluno(_BotaoIcone):
     def __init__(self, page: Page, icone: str, ctrl_serie: EscolhaSerie, ctrl_nome: CTexto, ctrl_ordenar_por: BotaoRadio, ctrl_tabela: TabelaAlunos, tamanho: int = TAMANHO_ICONE_BOTAO):
         super().__init__(page, icone, tamanho)
@@ -140,6 +139,7 @@ class BotaoIconePesquisarAluno(_BotaoIcone):
                 ]
             )
 
+
 class BotaoIconeLimparFiltros(_BotaoIcone):
     def __init__(self, page: Page, icone: str, ctrl_tabela: TabelaAlunos, controles: list, controle_radio: BotaoRadio, tamanho: int = TAMANHO_ICONE_BOTAO):
         super().__init__(page, icone, tamanho)
@@ -154,4 +154,39 @@ class BotaoIconeLimparFiltros(_BotaoIcone):
         self.ctrl_tabela.populate_table()
         self.page.update()
 
+
+class BotaoTextoSalvarAlteracoesAluno(_BotaoTexto):
+    def __init__(self, page: Page, label: str, ctrl_nome, ctrl_serie, ctrl_laudo, ctrl_obs, ctrl_id):
+        super().__init__(page, label)
+        self.ctrl_nome = ctrl_nome
+        self.ctrl_serie = ctrl_serie
+        self.ctrl_laudo = ctrl_laudo
+        self.ctrl_obs = ctrl_obs
+        self.ctrl_id = ctrl_id
+
+    def _on_click(self, e: ControlState):
+        nome = self.ctrl_nome.valor()
+        serie = self.ctrl_serie.valor()
+        laudo = self.ctrl_laudo.valor()
+        obs = self.ctrl_obs.valor()
+        id_ = self.ctrl_id.valor()
+
+        if editar_aluno(id_=id_, _nome=nome, _serie=serie, _laudo=laudo, _obs=obs):
+            self.notificacao.notificar('Alterações salvas')
+
+class BotaoTextoInativarAluno(_BotaoTexto):
+    def __init__(self, page: Page, label: str, ctrl_obs, ctrl_id):
+        super().__init__(page, label)
+        self.ctrl_obs = ctrl_obs
+        self.ctrl_id = ctrl_id
+
+    def _on_click(self, e: ControlState):
+        obs = self.ctrl_obs.valor()
+        id_ = self.ctrl_id.valor()
+
+        if obs is not None and obs != '':
+            if editar_aluno(id_=id_, _status=False, _obs=obs):
+                self.notificacao.notificar(msg=f'O aluno foi inativado. Motivo: {obs}')
+                return True
+        self.notificacao.notificar(msg=f"Preencha o campo 'observações', com o motivo pelo qual o aluno está sendo inativado", tipo='erro')
 
