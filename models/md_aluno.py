@@ -327,6 +327,19 @@ def remover_pontos(id_: int, qntd_pontos: int, descricao: str) -> bool:
         Logger.error(f'Erro ao remover pontos: {e}')
         return False
 
+def contar_alunos(serie: str, status: bool = None) -> int:
+    try:
+        with db:
+            alunos = Aluno.select().where(Aluno.serie == serie)
+
+            if status is not None:
+                alunos = alunos.where(Aluno.status == status)
+
+            return alunos.count()
+    except Exception as e:
+        Logger.error(f'Erro ao contar alunos: {e}')
+        return 0
+
 # alunos = [
 #     ["Ana Clara", "1A", None, None],
 #     ["Bruno Henrique", "1B", "Dislexia", "Precisa de acompanhamento especial"],

@@ -15,7 +15,7 @@ from views.vw_config import Configuracoes
 
 load_dotenv()
 APP_FOLDER = os.path.join(os.getenv('APPDATA'), os.getenv('APPNAME'))
-app = fs.FletEasy(route_init="/alunos")
+app = fs.FletEasy(route_init="/turmas")
 
 def init(data: fs.Datasy):
     # Criando pasta do sistema

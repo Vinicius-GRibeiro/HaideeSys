@@ -6,6 +6,8 @@ from models.md_aluno import ler_aluno
 from .vmd_detalhes import DetalhesAluno
 from .vmd_ctexto import CTexto
 from .vmd_escolhas import EscolhaSerie
+from models.md_aluno import contar_alunos
+from models.md_serie import ler_series
 
 ALTURA_CABECALHO = 30
 ALTURA_LINHA = 30
@@ -205,3 +207,12 @@ class TabelaAlunos(_Tabela):
             )
 
             self.page.open(detalhes_aluno)
+
+
+class TabelaEstatisticaserie(_Tabela):
+    def __init__(self, page: Page, serie: str = None):
+        super().__init__(page, ['Alunos', 'Ativos', 'Inativos', 'Média'])
+
+
+    def _on_row_click(self, e: ControlEvent):
+        ...

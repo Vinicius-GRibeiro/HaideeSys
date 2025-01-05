@@ -174,6 +174,7 @@ class BotaoTextoSalvarAlteracoesAluno(_BotaoTexto):
         if editar_aluno(id_=id_, _nome=nome, _serie=serie, _laudo=laudo, _obs=obs):
             self.notificacao.notificar('Alterações salvas')
 
+
 class BotaoTextoInativarAluno(_BotaoTexto):
     def __init__(self, page: Page, label: str, ctrl_obs, ctrl_id):
         super().__init__(page, label)
@@ -190,3 +191,10 @@ class BotaoTextoInativarAluno(_BotaoTexto):
                 return True
         self.notificacao.notificar(msg=f"Preencha o campo 'observações', com o motivo pelo qual o aluno está sendo inativado", tipo='erro')
 
+
+class BotaoTextoAdicionarSerie(_BotaoTexto):
+    def __init__(self, page: Page, label: str):
+        super().__init__(page, label)
+
+    def _on_click(self, e: ControlState):
+        ...

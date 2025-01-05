@@ -1,7 +1,9 @@
+from time import ctime
+
 from flet import Dropdown, Page, Colors, dropdown, TextStyle, InputBorder, FontWeight, ControlEvent, padding, alignment
 from abc import ABC, abstractmethod
 from models.md_serie import ler_series
-from models.md_aluno import ler_aluno
+from models.md_aluno import ler_aluno, contar_alunos
 
 ALTURA_PADRAO = 35
 LARGURA_PADRAO = 100
@@ -52,7 +54,6 @@ class _Escolha(ABC):
     def _on_change(self, e: ControlEvent):
         ...
 
-
 class EscolhaSerie(_Escolha):
     def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO, valor_padrao = None):
         super().__init__(page, label, altura, largura)
@@ -87,3 +88,19 @@ class EscolhaSerieSincronizadoComEscolhaAluno(_Escolha):
 
     def _on_change(self, e):
         self.escolha_aluno.populate_dropdown(serie=self.get.value)
+
+
+class EscolhaSerieEstatisticas(_Escolha):
+    def __init__(self, page: Page, label: str, tabela_estatistica, largura: int = LARGURA_PADRAO, altura: int = ALTURA_PADRAO):
+        super().__init__(page, label, largura=largura, altura=altura)
+        self.tabela = tabela_estatistica
+        self.populate_dropdown(ler_series()[1])  # type: ignore
+
+    def _on_change(self, e):
+        alunos = contar_alunos(serie=e.control.value)
+        alunos_ativos = contar_alunos(serie=e.control.value, status=True)
+        alunos_inativos = contar_alunos(serie=e.control.value, status=False)
+        #  TODO: IMPLEMENTAR CÁLCULO DE MÉDIA DOS ALUNOS DA TURMA DO E.CONTROL.VALUE
+        media = 0
+
+        self.tabela.populate_table([(alunos, alunos_ativos, alunos_inativos, media)])
