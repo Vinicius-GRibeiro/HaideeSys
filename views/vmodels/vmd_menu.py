@@ -85,13 +85,13 @@ class Menu:
                                     horizontal_alignment=CrossAxisAlignment.CENTER,
                                     controls=[
                                         Container(
-                                            content=Text(value='HS', size=70, color=Colors.ON_PRIMARY,
+                                            content=Text(value=os.getenv('APPNAMEINITIALS').upper(), size=70, color=Colors.ON_PRIMARY,
                                                          font_family='logo_iniciais'),
                                             padding=padding.only(left=25, right=25, top=10),
                                         ),
 
                                         Container(
-                                            content=Text(value='HAIDÉE SYS', size=30, color=Colors.ON_PRIMARY,
+                                            content=Text(value=os.getenv('APPNAME').upper(), size=30, color=Colors.ON_PRIMARY,
                                                          font_family='nunito', weight=FontWeight.W_800),
                                             padding=padding.only(left=25, right=25, bottom=10, top=-20),
                                         ),

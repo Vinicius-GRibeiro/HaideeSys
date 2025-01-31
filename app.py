@@ -1,4 +1,6 @@
 import os
+from os import getenv
+
 from dotenv import load_dotenv
 from flet import Theme, Colors
 from flet.core.types import ThemeMode
@@ -12,10 +14,9 @@ from views.vw_ocorrencias import Ocorrencias
 from views.vw_pontos import Pontos
 from views.vw_config import Configuracoes
 
-
 load_dotenv()
 APP_FOLDER = os.path.join(os.getenv('APPDATA'), os.getenv('APPNAME'))
-app = fs.FletEasy(route_init="/turmas")
+app = fs.FletEasy(route_init="/config")
 
 def init(data: fs.Datasy):
     # Criando pasta do sistema
@@ -30,8 +31,8 @@ def init(data: fs.Datasy):
     data.page.window.center()
     data.page.window.maximizable = False
     data.page.window.resizable = False
-    data.page.theme = Theme(color_scheme_seed=Colors.TEAL)
-    data.page.theme_mode = ThemeMode.LIGHT
+    data.page.theme = Theme(color_scheme_seed=getenv("THEMECOLOR"))
+    data.page.theme_mode = ThemeMode.LIGHT if getenv("THEMEMODE") == '1' else ThemeMode.DARK
     data.page.fonts = {
         'logo_iniciais': '/fonts/logo_iniciais.ttf',
         'logo_nome': '/fonts/logo_nome.otf',

@@ -4,7 +4,7 @@ from ._md_logger import Logger
 def criar_serie(serie: str) -> bool:
     """
 
-    :param serie: série no formato Xº Y - Sendo X um número e Y uma letra
+    :param serie: série no formato XY - Sendo X um número e Y uma letra
     :return: Verdadeiro ou falso
     """
     try:

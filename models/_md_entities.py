@@ -147,16 +147,27 @@ class Pontuacao(BaseModel):
         table_name = 'pontuacao'
 
 
+# Tabela: Pontuacao
+class DescricaoPontos(BaseModel):
+    id = AutoField(primary_key=True)
+    tipo = BooleanField(null=False, default=True)
+    descricao = TextField(null=False)
+    pontos = IntegerField(null=False)
+
+    class Meta:
+        table_name = 'descricao_pontos'
+
 # Função para criar as tabelas
 def criar_tabelas():
     try:
         with db:
-            Serie.criar_tabela_com_gatilhos()
-            Aluno.criar_tabela_com_gatilhos()
-            Chamada.criar_tabela_com_gatilhos()
-            EntradaChamada.criar_tabela_com_gatilhos()
-            Ocorrencia.criar_tabela_com_gatilhos()
-            Pontuacao.criar_tabela_com_gatilhos()
+            # Serie.criar_tabela_com_gatilhos()
+            # Aluno.criar_tabela_com_gatilhos()
+            # Chamada.criar_tabela_com_gatilhos()
+            # EntradaChamada.criar_tabela_com_gatilhos()
+            # Ocorrencia.criar_tabela_com_gatilhos()
+            # Pontuacao.criar_tabela_com_gatilhos()
+            DescricaoPontos.criar_tabela_com_gatilhos()
             Logger.info('Tabelas criada com sucesso!')
     except Exception as e:
             Logger.error(f'Erro ao criar tabelas: {e}')

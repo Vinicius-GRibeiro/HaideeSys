@@ -1,9 +1,8 @@
-from time import ctime
-
 from flet import Dropdown, Page, Colors, dropdown, TextStyle, InputBorder, FontWeight, ControlEvent, padding, alignment
 from abc import ABC, abstractmethod
 from models.md_serie import ler_series
 from models.md_aluno import ler_aluno, contar_alunos
+from models.md_descricao_pontos import ler_descricao
 
 ALTURA_PADRAO = 35
 LARGURA_PADRAO = 100
@@ -26,6 +25,7 @@ class _Escolha(ABC):
         return self.get.value
 
     def populate_dropdown(self, options: list[str]):
+        self.get.options.clear()
         for option in options:
             self.get.options.append(
                 dropdown.Option(option)
@@ -54,6 +54,7 @@ class _Escolha(ABC):
     def _on_change(self, e: ControlEvent):
         ...
 
+
 class EscolhaSerie(_Escolha):
     def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO, valor_padrao = None):
         super().__init__(page, label, altura, largura)
@@ -68,8 +69,8 @@ class EscolhaAlunos(_Escolha):
     def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO*3):
         super().__init__(page, label, altura, largura)
 
-    def populate_dropdown(self, serie: str):
-        alunos = ler_aluno(serie=serie)
+    def populate_dropdown(self, serie: str, somente_ativos: bool = None):
+        alunos = ler_aluno(serie=serie, somente_ativos=somente_ativos)
 
         self.get.options.clear()
         for aluno in alunos[1]:
@@ -81,13 +82,14 @@ class EscolhaAlunos(_Escolha):
 
 
 class EscolhaSerieSincronizadoComEscolhaAluno(_Escolha):
-    def __init__(self, page: Page, label: str, escolha_aluno: EscolhaAlunos, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO):
+    def __init__(self, page: Page, label: str, escolha_aluno: EscolhaAlunos, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO, somente_ativos: bool = None):
         super().__init__(page, label, altura, largura)
         self.populate_dropdown(ler_series()[1])  # type: ignore
         self.escolha_aluno = escolha_aluno
+        self.somente_ativos = somente_ativos
 
     def _on_change(self, e):
-        self.escolha_aluno.populate_dropdown(serie=self.get.value)
+        self.escolha_aluno.populate_dropdown(serie=self.get.value, somente_ativos=self.somente_ativos)
 
 
 class EscolhaSerieEstatisticas(_Escolha):
@@ -104,3 +106,50 @@ class EscolhaSerieEstatisticas(_Escolha):
         media = 0
 
         self.tabela.populate_table([(alunos, alunos_ativos, alunos_inativos, media)])
+
+
+class EscolhaSerieChamada(_Escolha):
+    def __init__(self, page: Page, label: str, ctrl_tabela):
+        super().__init__(page, label)
+        self.ctrl_tabela = ctrl_tabela
+        self.populate_dropdown(ler_series()[1])  # type: ignore
+
+    def _on_change(self, e):
+        alunos = ler_aluno(serie=e.control.value, somente_ativos=True)
+        if alunos[0]:
+            alunos = [(aluno.id, aluno.nome) for aluno in alunos[1]]
+        self.ctrl_tabela.populate_table(valores=alunos)
+
+
+class EscolhaSerieGerenciarChamada(_Escolha):
+    def __init__(self, page: Page, label: str, ctrl_tabela, largura: int = LARGURA_PADRAO):
+        super().__init__(page, label, largura=largura)
+        self.ctrl_tabela = ctrl_tabela
+        self.populate_dropdown(ler_series()[1])  # type: ignore
+
+    def _on_change(self, e):
+        ...
+
+
+class EscolhaDescricaoPontos(_Escolha):
+    def __init__(self, page: Page, label: str, pontos, largura: int = LARGURA_PADRAO):
+        super().__init__(page, label, largura=largura)
+        self.pontos = pontos
+
+    def _on_change(self, e):
+        self.pontos.get.value = ler_descricao(retornar_ponto=True, descricao=e.control.value)
+        self.page.update()
+
+
+class EscolhaTipoSincronizadoComDescricaoPontos(_Escolha):
+    def __init__(self, page: Page, label: str, escolha_descricao: EscolhaDescricaoPontos, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO):
+        super().__init__(page, label, altura, largura)
+        self.populate_dropdown(['Adicionar', 'Remover'])  # type: ignore
+        self.escolha_descricao = escolha_descricao
+
+    def _on_change(self, e):
+        tipo = True if e.control.value == 'Adicionar' else False
+        descricoes = ler_descricao(tipo)
+
+        if descricoes[0]:
+            self.escolha_descricao.populate_dropdown([desc.descricao for desc in descricoes[1]])

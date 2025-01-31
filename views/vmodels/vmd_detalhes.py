@@ -17,3 +17,13 @@ class _Detalhes(ABC):
 class DetalhesAluno(_Detalhes):
     def __init__(self, page: Page):
         super().__init__(page)
+
+
+class DetalhesChamada(_Detalhes):
+    def __init__(self, page: Page):
+        super().__init__(page)
+
+
+class DetalhesAdicionarChamada(_Detalhes):
+    def __init__(self, page: Page):
+        super().__init__(page)

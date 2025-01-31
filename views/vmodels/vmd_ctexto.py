@@ -9,7 +9,7 @@ EXPESSURA_BORDA_FOCADA = 3
 
 class _CTexto(ABC):
     def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO,
-                 senha: bool = False, somente_leitura: bool = False, valor_padrao: str = None):
+                 senha: bool = False, somente_leitura: bool = False, valor_padrao: str = None, qntd_linhas: int = 1, multilinha: bool = False):
         self.page = page
 
         self.label = label
@@ -18,6 +18,8 @@ class _CTexto(ABC):
         self.senha= senha
         self.somente_leitura = somente_leitura
         self.valor_padrao = valor_padrao
+        self.qntd_linhas = qntd_linhas
+        self.multilinha = multilinha
 
         self.get = self._get()
 
@@ -28,7 +30,7 @@ class _CTexto(ABC):
         return TextField(
             label=self.label,
             width=self.largura,
-            height=self.altura,
+            height=self.altura if not self.multilinha else None,
             text_style=TextStyle(font_family='nunito', color=Colors.PRIMARY, weight=FontWeight.W_500),
             label_style=TextStyle(font_family='nunito', color=Colors.PRIMARY, weight=FontWeight.W_700),
             border=InputBorder.UNDERLINE,
@@ -42,10 +44,14 @@ class _CTexto(ABC):
             bgcolor=Colors.with_opacity(opacity=.1, color=Colors.PRIMARY),
             content_padding=padding.only(bottom=15, left=5),
             read_only=self.somente_leitura,
-            value=self.valor_padrao
+            value=self.valor_padrao,
+            min_lines=self.qntd_linhas,
+            max_lines=self.qntd_linhas,
+            multiline=self.multilinha,
         )
 
 class CTexto(_CTexto):
     def __init__(self, page: Page, label: str, altura: int = ALTURA_PADRAO, largura: int = LARGURA_PADRAO,
-                 senha: bool = False, somente_leitura: bool = False, valor_padrao: str = None):
-        super().__init__(page, label, altura, largura, senha, somente_leitura, valor_padrao)
+                 senha: bool = False, somente_leitura: bool = False, valor_padrao: str = None, qntd_linhas: int = 1,
+                 multilinha: bool = False):
+        super().__init__(page, label, altura, largura, senha, somente_leitura, valor_padrao, qntd_linhas, multilinha)

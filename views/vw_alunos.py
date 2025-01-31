@@ -21,7 +21,7 @@ class Alunos:
         self.obs = CTexto(page=self.page, label='Observações', largura=720)
 
         self.btn_salvar_aluno = BotaoTextoSalvarAluno(page=self.page, label='Salvar', ctrl_serie=self.escolha_serie,
-                                                      ctrl_nome=self.nome, ctrl_laudo=self.laudo, ctrl_obs=self.obs, ctrl_tabela=self.tabela,)
+                                                      ctrl_nome=self.nome, ctrl_laudo=self.laudo, ctrl_obs=self.obs, ctrl_tabela=self.tabela)
         self.btn_radio_filtros = BotaoRadio(page=self.page, opcoes={'nome': 'Nome', 'serie': 'Série', 'pontos': 'Pontos', 'status': 'Status'})
         self.btn_radio_filtros.get.value = 'nome'
         self.btn_pesquisar_aluno = BotaoIconePesquisarAluno(page=self.page, icone=icons.SEARCH_ROUNDED, ctrl_serie=self.escolha_serie_pesquisa, ctrl_nome=self.nome_pesquisa, ctrl_ordenar_por=self.btn_radio_filtros, ctrl_tabela=self.tabela)

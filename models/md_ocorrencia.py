@@ -1,6 +1,9 @@
-from _md_entities import db, Ocorrencia
-from _md_logger import Logger
+from ._md_entities import db, Ocorrencia
+from ._md_logger import Logger
+from .md_aluno import remover_pontos
 from datetime import datetime
+
+from .md_descricao_pontos import ler_descricao
 
 
 def criar_ocorrencia(id_aluno: int, id_serie: str, oficina: str, assunto: str,
@@ -20,6 +23,9 @@ def criar_ocorrencia(id_aluno: int, id_serie: str, oficina: str, assunto: str,
             ocorrencia = Ocorrencia(aluno=id_aluno, serie=id_serie, data=data,oficina=oficina, assunto=assunto,
                                     descricao=descricao)
             ocorrencia.save()
+
+            qntd = ler_descricao(tipo=False, retornar_ponto=True, descricao='Ocorrência')
+            remover_pontos(id_=id_aluno, descricao='Ocorrência', qntd_pontos=qntd)
 
         Logger.info(f'Ocorrência criada para o aluno ({ocorrencia.aluno} - {ocorrencia.serie})')
         return True, ocorrencia.id
@@ -52,6 +58,8 @@ def ler_ocorrencia(_id: int = None, _serie: str = None, _aluno: int = None) -> t
             resultado = list(query)
             if resultado:
                 return True, resultado
+            else:
+                return False, None
     except Exception as e:
         Logger.error(f'Erro ao ler ocorrência: {e}')
         return False, None
